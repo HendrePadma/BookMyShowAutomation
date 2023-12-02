@@ -13,7 +13,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-public class NewBook {
+public class BookMyShowLoginFlow {
 
 	private static final String CITY = "Bengaluru";
 	private static final String EMAIL = "padma@YOPmail.com";
@@ -27,14 +27,14 @@ public class NewBook {
 		
 		driver.get(BOOKMYSHOW_HOME);
 		driver.manage().window().maximize();
-		
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 		// Select city 
 		WebElement place = driver.findElement(By.xpath("//input[@placeholder='Search for your city']"));
 		place.clear();
 		place.sendKeys(CITY);
 
 	
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+		
 		List<WebElement> list = driver.findElements(By.xpath("//div/div/div/div/div/div/div/ul/li/span/strong"));
 
 		// select an option from list
