@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WindowType;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class BookMyShowLoginFlow {
@@ -22,33 +25,27 @@ public class BookMyShowLoginFlow {
 	public static void main(String[] args) throws InterruptedException {
 
 		ChromeDriver driver = initDriver();
-
-		// Open bookMyShow URL
-		
-		driver.get(BOOKMYSHOW_HOME);
 		driver.manage().window().maximize();
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+		
+		// Open bookMyShow URL
+		driver.get(BOOKMYSHOW_HOME);
+		
 		// Select city 
 		WebElement place = driver.findElement(By.xpath("//input[@placeholder='Search for your city']"));
 		place.clear();
 		place.sendKeys(CITY);
 
-	
-		
-		List<WebElement> list = driver.findElements(By.xpath("//div/div/div/div/div/div/div/ul/li/span/strong"));
-
-		// select an option from list
-		for (int i = 0; i < list.size(); i++) {
-			String text = list.get(i).getText();
-			if (text.equalsIgnoreCase(CITY)) {
-				list.get(i).click();
-				break;
-			}
+		//Find and Click city
+		String cityXpath = "//*[@id='modal-root']//*/div/ul/li//*[text()='" + CITY + "']";
+		List<WebElement> list = driver.findElements(By.xpath(cityXpath));
+		if(list != null)
+		{
+			list.get(0).click();
 		}
-
+		
 		// Sign in page
-
-		driver.findElement(By.xpath("//div[@class='bwc__sc-1nbn7v6-14 khhVFa']")).click();
+		driver.findElement(By.xpath("//*/div[text()='Sign in']")).click();
 		
 		// continue with email click
 		driver.findElement(By.xpath(" //div[contains(text(),'Continue with Email')]")).click();
@@ -57,8 +54,12 @@ public class BookMyShowLoginFlow {
 		WebElement emailfield = driver.findElement(By.xpath("//input[@id='emailId']"));
 		emailfield.clear();
 		emailfield.sendKeys(EMAIL);
-		driver.findElement(By.xpath("//button[normalize-space()='Continue']")).click();
+		emailfield.sendKeys(Keys.TAB);
 		
+		Wait<WebDriver> waitOnCondition = new WebDriverWait(driver, Duration.ofSeconds(2));
+		WebElement continueButton =	driver.findElement(By.xpath("//button[normalize-space()='Continue']"));
+		waitOnCondition.until(webDriver -> continueButton.getAttribute("class").contains("hmbiuL"));
+		continueButton.click();
 		
 		// open new tab in same browser window
 		driver.switchTo().newWindow(WindowType.TAB);
